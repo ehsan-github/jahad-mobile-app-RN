@@ -10,9 +10,7 @@ import {
 } from 'react-native';
 
 import { Card, ListItem, Button, Avatar, Badge } from 'react-native-elements'
-
-/* import { WebBrowser } from 'expo';*/
-
+import { Col, Row, Grid } from "react-native-easy-grid";
 import { MonoText } from '../components/StyledText';
 
 let names = [
@@ -43,7 +41,7 @@ export default class HomeScreen extends React.Component {
     static navigationOptions = {
       title: 'خانه',
       headerStyle: {
-          backgroundColor: '#f4511e',
+          backgroundColor: '#03A9F4',
       },
       headerTintColor: '#fff',
       headerTitleStyle: {
@@ -117,10 +115,10 @@ const styles = StyleSheet.create({
         padding: 12,
         marginBottom: 5,
         alignItems: 'center',
+        justifyContent: 'space-between'
     },
     cardText: {
         marginLeft: 12,
-        fontSize: 23,
     },
     cardButton: {
         borderRadius: 5,
@@ -129,7 +127,7 @@ const styles = StyleSheet.create({
         marginBottom: 0
     },
     cardBadge: {
-        color: 'orange'
+        color: 'orange',
     },
     name: {}
 });

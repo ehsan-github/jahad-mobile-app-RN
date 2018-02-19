@@ -23,7 +23,7 @@ export default class Second extends React.Component {
         /* header: null*/
         title: 'Second',
         headerStyle: {
-            backgroundColor: '#f4511e',
+            backgroundColor: '#03A9F4',
         },
         headerTintColor: '#fff',
         headerTitleStyle: {
