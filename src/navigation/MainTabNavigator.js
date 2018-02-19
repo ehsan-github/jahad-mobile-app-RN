@@ -7,15 +7,21 @@ import Colors from '../constants/Colors';
 
 import HomeScreen from '../screens/HomeScreen';
 import Tahvil from '../screens/Tahvil';
+import Second from '../screens/Second';
 import SettingsScreen from '../screens/SettingsScreen';
 
 const HomeDrawer = StackNavigator({
-  Home: {
-    screen: HomeScreen,
-  },
-  تحویل: {
-    screen: Tahvil,
-  },
+    Home: {
+        screen: HomeScreen,
+    },
+    تحویل: {
+        screen: Tahvil,
+    },
+    Second: {
+        screen: Second,
+    }
+}, {
+    headerMode: 'none',
 });
 
 export default TabNavigator(
@@ -53,10 +59,11 @@ export default TabNavigator(
         );
       },
     }),
-    tabBarComponent: TabBarBottom,
-    tabBarPosition: 'bottom',
-    animationEnabled: false,
-    swipeEnabled: false,
+      headerMode: 'float',
+      tabBarComponent: TabBarBottom,
+      tabBarPosition: 'bottom',
+      animationEnabled: false,
+      swipeEnabled: false,
   }
 );
 

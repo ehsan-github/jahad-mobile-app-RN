@@ -8,9 +8,31 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+
+import { Card, ListItem, Button, Avatar, Badge } from 'react-native-elements'
+
 /* import { WebBrowser } from 'expo';*/
 
 import { MonoText } from '../components/StyledText';
+
+let names = [
+    {
+        name: 'تحویل',
+        avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
+    },
+    {
+        name: 'Second',
+        avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
+    },
+    {
+        name: 'Third',
+        avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
+    },
+    {
+        name: 'Fourth',
+        avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
+    }
+]
 
 export default class HomeScreen extends React.Component {
 
@@ -19,32 +41,49 @@ export default class HomeScreen extends React.Component {
         this._handleNavigation = this._handleNavigation.bind(this);
 }
     static navigationOptions = {
-        header: null,
+      title: 'خانه',
+      headerStyle: {
+          backgroundColor: '#f4511e',
+      },
+      headerTintColor: '#fff',
+      headerTitleStyle: {
+          fontWeight: 'bold',
+      },
     };
 
-    render() {
-        let names = [
-            { name: 'تحویل' },
-            { name: 'Second' },
-            { name: 'Third' },
-            { name: 'Fourth' }
-        ]
-
-        _renderCard = (obj, index) => {
-            return (
-                <View style={styles.card} key={index}>
-                <Text onPress={() => this._handleNavigation(obj)} style={styles.cardText}>
-                {obj.name}
+    _renderCard = (obj, i) => {
+        return (
+            <Card key={i} title={obj.name}>
+                <View style={styles.card}>
+                    <Avatar
+                        large
+                        source={{ uri: obj.avatar }}
+                        activeOpacity={0.7}
+                    />
+                    <Text style={styles.cardText}>
+                    {obj.name}
                     </Text>
-            </View>
-            )
+                    <Badge
+                        value={3}
+                        textStyle={styles.cardBadge}
+                    />
+                </View>
+                <Button
+                    icon={{ name: 'check' }}
+                    backgroundColor='#03A9F4'
+                    buttonStyle={styles.cardButton}
+                    onPress={() => this._handleNavigation(obj)}
+                    title='مشاهده کنید' />
+            </Card>
+            );
         }
 
+    render() {
         return (
             <View style={styles.container}>
                 <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-                    {names.map((name, index) => {
-                        return _renderCard(name, index)
+                    {names.map((obj, index) => {
+                        return this._renderCard(obj, index)
                      })}
                 </ScrollView>
             </View>
@@ -78,12 +117,19 @@ const styles = StyleSheet.create({
         padding: 12,
         marginBottom: 5,
         alignItems: 'center',
-        borderRadius: 4,
-        borderWidth: 0.5,
-        borderColor: '#d6d7da'
     },
     cardText: {
         marginLeft: 12,
         fontSize: 23,
-    }
+    },
+    cardButton: {
+        borderRadius: 5,
+        marginLeft: 0,
+        marginRight: 0,
+        marginBottom: 0
+    },
+    cardBadge: {
+        color: 'orange'
+    },
+    name: {}
 });
