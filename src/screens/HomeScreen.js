@@ -13,31 +13,17 @@ import { Card, ListItem, Button, Avatar, Badge } from 'react-native-elements'
 import { Col, Row, Grid } from "react-native-easy-grid";
 import { MonoText } from '../components/StyledText';
 
-let names = [
-    {
-        name: 'تحویل',
-        avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
-    },
-    {
-        name: 'Second',
-        avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
-    },
-    {
-        name: 'Third',
-        avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
-    },
-    {
-        name: 'Fourth',
-        avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
-    }
-]
+import { createAreaDb, insertAreaData, createContractDb, insertContractData, createPeriodDb, insertPeriodData } from '../db/db'
+
+import { menues, areas, contracts, periods } from '../mock/data'
 
 export default class HomeScreen extends React.Component {
 
     constructor(props){
         super(props);
         this._handleNavigation = this._handleNavigation.bind(this);
-}
+    }
+
     static navigationOptions = {
       title: 'خانه',
       headerStyle: {
@@ -49,6 +35,15 @@ export default class HomeScreen extends React.Component {
       },
     };
 
+    componentWillMount(){
+        createAreaDb()
+        insertAreaData(areas)
+        createContractDb()
+        insertContractData(contracts)
+        createPeriodDb()
+        insertPeriodData(periods)
+    }
+
     _renderCard = (obj, i) => {
         return (
             <Card key={i} title={obj.name}>
@@ -59,7 +54,7 @@ export default class HomeScreen extends React.Component {
                         activeOpacity={0.7}
                     />
                     <Text style={styles.cardText}>
-                    {obj.name}
+                        {obj.name}
                     </Text>
                     <Badge
                         value={3}
@@ -80,7 +75,7 @@ export default class HomeScreen extends React.Component {
         return (
             <View style={styles.container}>
                 <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-                    {names.map((obj, index) => {
+                    {menues.map((obj, index) => {
                         return this._renderCard(obj, index)
                      })}
                 </ScrollView>

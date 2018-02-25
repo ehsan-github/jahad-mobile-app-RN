@@ -6,15 +6,15 @@ export class DropDown extends React.Component {
     constructor(props){
         super(props)
         this.state = {
-            value: null
+            value: props.defaultValue
         }
         this._handleValueChange = this._handleValueChange.bind(this)
     }
 
     _renderOptions(){
-        return this.props.options.map((op, i) => {
+        return this.props.options.map(op => {
             return (
-                <Picker.Item key={i} label={op} value={op} />
+                <Picker.Item key={op.id} label={op.name} value={op.id} />
             )
         })
     }
@@ -24,6 +24,15 @@ export class DropDown extends React.Component {
             value
         })
         this.props.handleValueChange(value, index)
+    }
+
+    componentWillReceiveProps(nextProps){
+        let { defaultValue } = nextProps
+        if (this.props.defaultValue != defaultValue){
+            this.setState({
+                value: defaultValue
+            })
+        }
     }
 
     render() {
