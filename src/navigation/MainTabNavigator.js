@@ -21,49 +21,52 @@ const HomeDrawer = StackNavigator({
         screen: Second,
     }
 }, {
-    headerMode: 'none',
+    /* headerMode: 'none',*/
 });
 
 export default TabNavigator(
-  {
-    Home: {
-      screen: HomeDrawer,
+    {
+        Home: {
+            screen: HomeDrawer,
+            navigationOptions: {
+                header: false,
+            }
+        },
+        Settings: {
+            screen: SettingsScreen,
+        },
     },
-    Settings: {
-      screen: SettingsScreen,
-    },
-  },
-  {
-    navigationOptions: ({ navigation }) => ({
-      tabBarIcon: ({ focused }) => {
-        const { routeName } = navigation.state;
-        let iconName;
-        switch (routeName) {
-          case 'Home':
-            iconName =
-              Platform.OS === 'ios'
-                ? `ios-home${focused ? '' : '-outline'}`
-                : `md-home`
-            break;
-          case 'Settings':
-            iconName =
-              Platform.OS === 'ios' ? `ios-options${focused ? '' : '-outline'}` : 'md-options';
-        }
-        return (
-          <Ionicons
-            name={iconName}
-            size={28}
-            style={{ marginBottom: -3 }}
-            color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
-          />
-        );
-      },
-    }),
-      headerMode: 'float',
-      tabBarComponent: TabBarBottom,
-      tabBarPosition: 'bottom',
-      animationEnabled: false,
-      swipeEnabled: false,
-  }
+    {
+        navigationOptions: ({ navigation }) => ({
+            tabBarIcon: ({ focused }) => {
+                const { routeName } = navigation.state;
+                let iconName;
+                switch (routeName) {
+                    case 'Home':
+                        iconName =
+                            Platform.OS === 'ios'
+                            ? `ios-home${focused ? '' : '-outline'}`
+                            : `md-home`
+                        break;
+                    case 'Settings':
+                        iconName =
+                            Platform.OS === 'ios' ? `ios-options${focused ? '' : '-outline'}` : 'md-options';
+                }
+                return (
+                    <Ionicons
+                        name={iconName}
+                        size={28}
+                        style={{ marginBottom: -3 }}
+                        color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
+                    />
+                );
+            },
+        }),
+        headerMode: 'float',
+        tabBarComponent: TabBarBottom,
+        tabBarPosition: 'bottom',
+        animationEnabled: false,
+        swipeEnabled: false,
+    }
 );
 
