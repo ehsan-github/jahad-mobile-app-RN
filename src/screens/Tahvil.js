@@ -50,10 +50,10 @@ export default class HomeScreen extends React.Component {
 
     updateData() {
         let { contract, contractOptions, period: { startTime, endTime } } = this.state
-        let periodQuery = startTime ? ` and date between date('${startTime}') and date('${endTime}')` : ''
+        let periodQuery = startTime ? `and date between date('${startTime}') and date('${endTime}')` : ''
         let query = (contract == -1)
-                  ? `select * from items where contract in (${contractOptions.join(',')})${periodQuery};`
-                  : `select * from items where contract = ${contract}${periodQuery};`
+                  ? `select * from items where contract in (${contractOptions.join(',')}) ${periodQuery};`
+                  : `select * from items where contract = ${contract} ${periodQuery};`
 
         db.transaction(
             tx => {
