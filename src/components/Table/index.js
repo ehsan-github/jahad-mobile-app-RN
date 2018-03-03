@@ -21,7 +21,7 @@ export const TableHeader = () => (
 )
 
 const TableRow = ({ item }) => (
-    <Card>
+    <Card containerStyle={styles.containerStyle}>
         <View style={styles.card}>
             <Text style={styles.cardText}>{item.type}</Text>
             <Text style={styles.cardText}>{item.network}</Text>
@@ -76,6 +76,10 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around'
     },
     headerContainerStyle: {
+        backgroundColor: '#f4ee03d6',
+    },
+    containerStyle: {
+        backgroundColor: '#f4ee0310',
     },
     headerText: {
         fontSize: 17,
