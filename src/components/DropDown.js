@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Picker } from 'react-native';
 
-export class DropDown extends React.Component {
+export default class DropDown extends React.Component {
 
     constructor(props){
         super(props)

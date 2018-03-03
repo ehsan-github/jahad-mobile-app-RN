@@ -14,7 +14,7 @@ import { SQLite } from 'expo';
 
 const db = SQLite.openDatabase('db.db');
 
-import { DropDown } from './DropDown';
+import DropDown from './DropDown';
 
 import R from 'ramda';
 
@@ -26,9 +26,9 @@ export class FiltersTabBar extends React.Component {
         super(props)
         this.state = {
             mainOptionsIndex: 0,
-            'دوره': { options: [], value: 1 },
-            'حوزه': { options: [], value: 1 },
-            'پیمان': { options: [], value: 1 }
+            'دوره': { options: [], value: -1 },
+            'حوزه': { options: [], value: -1 },
+            'پیمان': { options: [], value: -1 }
         }
         this.mainDropDownChanged = this.mainDropDownChanged.bind(this)
         this.minorDropDownChanged= this.minorDropDownChanged.bind(this)
@@ -49,22 +49,25 @@ export class FiltersTabBar extends React.Component {
                 tx.executeSql(
                     `select * from areas`,
                     [],
-                    (_, { rows: { _array } }) => this.setState({ 'حوزه': { options: _array, value: _array[0].id || null } })
+                    (_, { rows: { _array } }) => this.setState({ 'حوزه': { options: _array, value: -1 } })
                 )
             }
         )
     }
 
     getContractDataAndSetIt(areaId = null){
-        areaId = areaId || this.state['حوزه'].value || 1
+        areaId = areaId || this.state['حوزه'].value
+        let query = (areaId == -1)
+                  ? `select * from contracts`
+                  : `select * from contracts where areaId = ${areaId}`
         db.transaction(
             tx => {
                 tx.executeSql(
-                    `select * from contracts where areaId = ?`,
-                    [areaId],
+                    query,
+                    [],
                     (_, { rows: { _array } }) => {
-                        this.setState({ 'پیمان': { options: _array, value: _array[0].id } })
-                        this.props.contractChanged(_array[0].id)
+                        this.setState({ 'پیمان': { options: _array, value: -1 } })
+                        this.props.contractChanged({ options: R.map(R.prop('id'),_array), value: -1 })
                     }
                 )
             }
@@ -97,16 +100,23 @@ export class FiltersTabBar extends React.Component {
         this.setState({
             [mainOptionName]: newValue
         })
-        if (mainOptionsIndex == 1){
-            this.getContractDataAndSetIt(value)
+        if (mainOptionsIndex == 0){             //Period changed
+            let period = this.state['دوره'].options[i-1] || {}
+            this.props.periodChanged({ period })
         }
-        if (mainOptionsIndex == 2){
-            this.props.contractChanged(value)
+        if (mainOptionsIndex == 1){             //Area changed
+            this.getContractDataAndSetIt(value)
+            setTimeout(()=> this.setState({
+                mainOptionsIndex: 2
+            }), 500)
+        }
+        if (mainOptionsIndex == 2){             //Contract changed
+            this.props.contractChanged({ value })
         }
     }
 
     render() {
-        let minorOptions = this.state[mainOptions[this.state.mainOptionsIndex].name].options
+        let minorOptions = R.prepend({ id: -1, name: 'همه' }, this.state[mainOptions[this.state.mainOptionsIndex].name].options)
         let minorvalue = this.state[mainOptions[this.state.mainOptionsIndex].name].value
         return (
             <View style={styles.tabBarInfoContainer}>

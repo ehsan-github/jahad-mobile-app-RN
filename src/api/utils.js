@@ -44,6 +44,7 @@ export const getApiF = R.pipeK(
 
 export const postApiF = R.pipeK(
     (addr, body) => {
+        body = JSON.stringify(body)
         const opts = R.mergeAll([postOpt, headerOpt(acceptHdr, contentHdr, credHdr), { body }])
         return fetchF(opts, addr)
     },

@@ -10,11 +10,12 @@ import {
 } from 'react-native';
 import { WebBrowser } from 'expo';
 import { Col, Row, Grid } from "react-native-easy-grid";
+import R from 'ramda';
 
 import { MonoText } from '../components/StyledText';
 import { FiltersTabBar } from '../components/FiltersTabBar';
 import Loading from '../components/Loading'
-import Table from '../components/Table'
+import Table, { TableHeader } from '../components/Table'
 
 import { createDb, insertData } from '../db/db'
 import { data, filters } from '../mock/data'
@@ -39,19 +40,26 @@ export default class HomeScreen extends React.Component {
         this.state = {
             data: [],
             contract: null,
-            period: null
+            contractOptions: [],
+            period: {}
         }
         this.getDataAndSetIt = this.getDataAndSetIt.bind(this)
         this.contractFilterChanged= this.contractFilterChanged.bind(this)
+        this.periodFilterChanged= this.periodFilterChanged.bind(this)
     }
 
     updateData() {
-        let { contract, period } = this.state
+        let { contract, contractOptions, period: { startTime, endTime } } = this.state
+        let periodQuery = startTime ? ` and date between date('${startTime}') and date('${endTime}')` : ''
+        let query = (contract == -1)
+                  ? `select * from items where contract in (${contractOptions.join(',')})${periodQuery};`
+                  : `select * from items where contract = ${contract}${periodQuery};`
+
         db.transaction(
             tx => {
                 tx.executeSql(
-                    `select * from items where contract = ?`,
-                    [contract],
+                    query,
+                    [],
                     (_, { rows: { _array } }) => this.setState({ data: _array })
                 )
             }
@@ -70,10 +78,15 @@ export default class HomeScreen extends React.Component {
         )
     }
 
-    contractFilterChanged(value){
+    contractFilterChanged({ value, options = this.state.contractOptions }){
         this.setState({
-            contract: value
+            contract: value,
+            contractOptions: options
         })
+    }
+
+    periodFilterChanged({ period }){
+        this.setState({ period })
     }
 
     componentWillMount(){
@@ -86,7 +99,11 @@ export default class HomeScreen extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevState.contract !== this.state.contract) {
+        if (
+            (prevState.contract !== this.state.contract) ||
+            (prevState.contractOptions !== this.state.contractOptions) ||
+            (!R.equals(prevState.period, this.state.period))
+        ) {
             this.updateData()
         }
     }
@@ -95,16 +112,19 @@ export default class HomeScreen extends React.Component {
         return (
             <View style={styles.container}>
 
-                <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+                <TableHeader />
 
-                    <View style={styles.welcomeContainer}>
-                    </View>
+                <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
 
                     <Table items={this.state.data} />
 
+                    <View style={styles.blankSpace}></View>
                 </ScrollView>
 
-                <FiltersTabBar contractChanged={this.contractFilterChanged}/>
+                <FiltersTabBar
+                    contractChanged={this.contractFilterChanged}
+                    periodChanged={this.periodFilterChanged}
+                />
 
             </View>
         );
@@ -124,12 +144,13 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     contentContainer: {
-        paddingTop: 30,
+        paddingTop: -10,
+        paddingBottom: 60,
     },
-    welcomeContainer: {
+    blankSpace: {
         alignItems: 'center',
-        marginTop: 10,
-        marginBottom: 20,
+        marginTop: 120,
+        /* marginBottom: 20,*/
     },
     welcomeImage: {
         width: 100,

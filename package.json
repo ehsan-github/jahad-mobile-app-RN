@@ -11,6 +11,7 @@
     "@expo/samples": "2.1.1",
     "expo": "^25.0.0",
     "ramda": "^0.25.0",
+    "ramda-fantasy": "^0.8.0",
     "react": "16.2.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-25.0.0.tar.gz",
     "react-native-easy-grid": "^0.1.17",

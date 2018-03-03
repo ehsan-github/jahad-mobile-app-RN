@@ -9,13 +9,14 @@ import {
     View,
 } from 'react-native';
 
-import { Card, ListItem, Button, Avatar, Badge } from 'react-native-elements'
+import { Card, Button, Avatar, Badge } from 'react-native-elements'
 import { Col, Row, Grid } from "react-native-easy-grid";
 import { MonoText } from '../components/StyledText';
 
 import { createAreaDb, insertAreaData, createContractDb, insertContractData, createPeriodDb, insertPeriodData } from '../db/db'
 
 import { menues, areas, contracts, periods } from '../mock/data'
+import { getSpItems } from '../api'
 
 export default class HomeScreen extends React.Component {
 
@@ -42,6 +43,33 @@ export default class HomeScreen extends React.Component {
         insertContractData(contracts)
         createPeriodDb()
         insertPeriodData(periods)
+
+        /* getSpItems('GetAreas')
+         *     .map(x => JSON.parse(x))
+         *     .fork(
+         *         err => console.warn(err),
+         *         areas => {
+         *             insertAreaData(areas)
+         *         }
+         * )
+
+         * getSpItems('GetContracts')
+         *     .map(x => JSON.parse(x))
+         *     .fork(
+         *         err => console.warn(err),
+         *         contracts => {
+         *             insertContractData(contracts)
+         *         }
+         * )
+
+         * getSpItems('GetPeriods')
+         *     .map(x => JSON.parse(x))
+         *     .fork(
+         *         err => console.warn(err),
+         *         periods => {
+         *             insertPeriodData(periods)
+         *         }
+         * )*/
     }
 
     _renderCard = (obj, i) => {

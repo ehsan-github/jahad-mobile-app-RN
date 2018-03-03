@@ -5,7 +5,7 @@ export const data = [
         network: 1,
         drain: 1,
         equip: 1,
-        date: 'some day'
+        date: '2018-01-01'
     },
     {
         contract: 2,
@@ -13,7 +13,7 @@ export const data = [
         network: 2.1,
         drain: 2.1,
         equip: 2.1,
-        date: 'some day'
+        date: '2018-01-02'
     },
     {
         contract: 2,
@@ -21,7 +21,7 @@ export const data = [
         network: 2.2,
         drain: 2.2,
         equip: 2.2,
-        date: 'some day'
+        date: '2018-01-03'
     },
     {
         contract: 3,
@@ -29,7 +29,7 @@ export const data = [
         network: 3,
         drain: 3,
         equip: 3,
-        date: 'some day'
+        date: '2018-01-04'
     },
     {
         contract: 4,
@@ -37,7 +37,7 @@ export const data = [
         network: 4,
         drain: 4,
         equip: 4,
-        date: 'some day'
+        date: '2018-01-05'
     },
     {
         contract: 5,
@@ -45,7 +45,7 @@ export const data = [
         network: 5,
         drain: 5,
         equip: 5,
-        date: 'some day'
+        date: '2018-01-06'
     }
 ];
 
@@ -91,8 +91,13 @@ export const contracts = [
 export const periods = [
     {
         name: 'د1',
-        startTime: '',
-        endTime: ''
+        startTime: '2018-01-01',
+        endTime: '2018-01-04'
+    },
+    {
+        name: 'د2',
+        startTime: '2018-01-04',
+        endTime: '2018-01-06'
     }
 ]
 
