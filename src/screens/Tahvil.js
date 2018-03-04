@@ -1,12 +1,13 @@
 import React from 'react';
 import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Image,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+    ActivityIndicator,
 } from 'react-native';
 import { WebBrowser } from 'expo';
 import { Col, Row, Grid } from "react-native-easy-grid";
@@ -41,7 +42,8 @@ export default class HomeScreen extends React.Component {
             data: [],
             contract: null,
             contractOptions: [],
-            period: {}
+            period: {},
+            loading: true
         }
         this.getDataAndSetIt = this.getDataAndSetIt.bind(this)
         this.contractFilterChanged= this.contractFilterChanged.bind(this)
@@ -49,6 +51,7 @@ export default class HomeScreen extends React.Component {
     }
 
     updateData() {
+        this.setState({ loading: true })
         let { contract, contractOptions, period: { startTime, endTime } } = this.state
         let periodQuery = startTime ? `and date between date('${startTime}') and date('${endTime}')` : ''
         let query = (contract == -1)
@@ -60,7 +63,7 @@ export default class HomeScreen extends React.Component {
                 tx.executeSql(
                     query,
                     [],
-                    (_, { rows: { _array } }) => this.setState({ data: _array })
+                    (_, { rows: { _array } }) => setTimeout(()=> this.setState({ data: _array, loading: false }), 200)
                 )
             }
         )
@@ -72,7 +75,10 @@ export default class HomeScreen extends React.Component {
                 tx.executeSql(
                     `select * from items`,
                     [],
-                    (_, { rows: { _array } }) => this.setState({ data: _array })
+                    (_, { rows: { _array } }) => this.setState({
+                        data: _array,
+                        loading: false
+                    })
                 )
             }
         )
@@ -109,6 +115,7 @@ export default class HomeScreen extends React.Component {
     }
 
     render() {
+        let { loading } = this.state
         return (
             <View style={styles.container}>
 
@@ -116,7 +123,10 @@ export default class HomeScreen extends React.Component {
 
                 <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
 
-                    <Table items={this.state.data} />
+                    {loading ?
+                     (<ActivityIndicator style={styles.activityIndicator} size="large" color="#03A9F4" />) :
+                     (<Table items={this.state.data} />)
+                    }
 
                     <View style={styles.blankSpace}></View>
                 </ScrollView>
@@ -194,4 +204,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#2e78b7',
     },
+    activityIndicator: {
+        marginTop: 150
+    }
 });
