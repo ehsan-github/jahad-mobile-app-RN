@@ -24,12 +24,14 @@ const TableRow = ({ item }) => (
     <Card containerStyle={styles.containerStyle}>
         <View style={styles.card}>
             <Text style={styles.cardText}>{item.type}</Text>
-            <Text style={styles.cardText}>{item.network}</Text>
-            <Text style={styles.cardText}>{item.drain}</Text>
-            <Text style={styles.cardText}>{item.equip}</Text>
+            <Text style={styles.cardText}>{strip(item.network)}</Text>
+            <Text style={styles.cardText}>{strip(item.drain)}</Text>
+            <Text style={styles.cardText}>{strip(item.equip)}</Text>
         </View>
     </Card>
 );
+
+const strip = number => parseFloat(number).toPrecision(3);
 
 export default class Table extends Component{
 

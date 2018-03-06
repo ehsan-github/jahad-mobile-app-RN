@@ -8,6 +8,7 @@ import Colors from '../constants/Colors';
 import HomeScreen from '../screens/HomeScreen';
 import Tahvil from '../screens/Tahvil';
 import Second from '../screens/Second';
+import Third from '../screens/Third';
 import SettingsScreen from '../screens/SettingsScreen';
 
 const HomeDrawer = StackNavigator({
@@ -19,12 +20,15 @@ const HomeDrawer = StackNavigator({
     },
     Second: {
         screen: Second,
+    },
+    Third: {
+        screen: Third,
     }
 }, {
     /* headerMode: 'none',*/
 });
 
-export default TabNavigator(
+export default StackNavigator (
     {
         Home: {
             screen: HomeDrawer,
@@ -36,37 +40,37 @@ export default TabNavigator(
             screen: SettingsScreen,
         },
     },
-    {
-        navigationOptions: ({ navigation }) => ({
-            tabBarIcon: ({ focused }) => {
-                const { routeName } = navigation.state;
-                let iconName;
-                switch (routeName) {
-                    case 'Home':
-                        iconName =
-                            Platform.OS === 'ios'
-                            ? `ios-home${focused ? '' : '-outline'}`
-                            : `md-home`
-                        break;
-                    case 'Settings':
-                        iconName =
-                            Platform.OS === 'ios' ? `ios-options${focused ? '' : '-outline'}` : 'md-options';
-                }
-                return (
-                    <Ionicons
-                        name={iconName}
-                        size={28}
-                        style={{ marginBottom: -3 }}
-                        color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
-                    />
-                );
-            },
-        }),
-        headerMode: 'float',
-        tabBarComponent: TabBarBottom,
-        tabBarPosition: 'bottom',
-        animationEnabled: false,
-        swipeEnabled: false,
-    }
+    /* {
+     *     navigationOptions: ({ navigation }) => ({
+     *         tabBarIcon: ({ focused }) => {
+     *             const { routeName } = navigation.state;
+     *             let iconName;
+     *             switch (routeName) {
+     *                 case 'Home':
+     *                     iconName =
+     *                         Platform.OS === 'ios'
+     *                         ? `ios-home${focused ? '' : '-outline'}`
+     *                         : `md-home`
+     *                     break;
+     *                 case 'Settings':
+     *                     iconName =
+     *                         Platform.OS === 'ios' ? `ios-options${focused ? '' : '-outline'}` : 'md-options';
+     *             }
+     *             return (
+     *                 <Ionicons
+     *                     name={iconName}
+     *                     size={28}
+     *                     style={{ marginBottom: -3 }}
+     *                     color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
+     *                 />
+     *             );
+     *         },
+     *     }),
+     *     headerMode: 'float',
+     *     tabBarComponent: TabBarBottom,
+     *     tabBarPosition: 'bottom',
+     *     animationEnabled: false,
+     *     swipeEnabled: false,
+     * }*/
 );
 

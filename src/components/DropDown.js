@@ -38,19 +38,22 @@ export default class DropDown extends React.Component {
     render() {
         return (
             <Picker
-            selectedValue={this.state.value}
-            onValueChange={this._handleValueChange}>
-            {this._renderOptions()}
+                mode="dropdown"
+                style={styles.picker}
+                selectedValue={this.state.value}
+                onValueChange={this._handleValueChange}>
+                {this._renderOptions()}
             </Picker>
         )
     }
 }
 
 const styles = StyleSheet.create({
-    style: {
+    picker: {
         width: 100,
-        height: 50
+        direction: 'rtl',
     },
     textStyle: {},
-    dropdownStyle: {}
+    dropdownStyle: {
+    }
 })

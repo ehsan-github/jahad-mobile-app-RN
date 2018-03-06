@@ -45,7 +45,6 @@ export default class HomeScreen extends React.Component {
             period: {},
             loading: true
         }
-        this.getDataAndSetIt = this.getDataAndSetIt.bind(this)
         this.contractFilterChanged= this.contractFilterChanged.bind(this)
         this.periodFilterChanged= this.periodFilterChanged.bind(this)
     }
@@ -69,21 +68,6 @@ export default class HomeScreen extends React.Component {
         )
     }
 
-    getDataAndSetIt(){
-        db.transaction(
-            tx => {
-                tx.executeSql(
-                    `select * from items`,
-                    [],
-                    (_, { rows: { _array } }) => this.setState({
-                        data: _array,
-                        loading: false
-                    })
-                )
-            }
-        )
-    }
-
     contractFilterChanged({ value, options = this.state.contractOptions }){
         this.setState({
             contract: value,
@@ -101,7 +85,6 @@ export default class HomeScreen extends React.Component {
     }
 
     componentDidMount(){
-        this.getDataAndSetIt()
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -159,7 +142,7 @@ const styles = StyleSheet.create({
     },
     blankSpace: {
         alignItems: 'center',
-        marginTop: 120,
+        marginTop: 75,
         /* marginBottom: 20,*/
     },
     welcomeImage: {
