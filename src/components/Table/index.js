@@ -31,7 +31,7 @@ const TableRow = ({ item }) => (
     </Card>
 );
 
-const strip = number => number.toFixed(2);
+const strip = number => number ? number.toFixed(0) : 0;
 
 export default class Table extends Component{
 
@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
     },
     cardText: {
         textAlign: 'center',
+        width: '25%'
     },
     tableHeader: {
         position: 'absolute',

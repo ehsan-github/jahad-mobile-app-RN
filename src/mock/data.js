@@ -104,18 +104,18 @@ export const periods = [
 export const menues = [
     {
         name: 'تحویل پروژه ها',
-        avatar: '../assets/images/tahvil_png.jpg'
+        avatar: '../assets/images/tahvil_png.png'
     },
     {
         name: 'ارزشیابی عملکرد',
-        avatar: '../assets/images/arzeshyabi_png.jpg'
+        avatar: '../assets/images/arzeshyabi_png.png'
     },
     {
         name: 'اعتبارات و هزینه ها',
-        avatar: '../assets/images/mali_png.jpg'
+        avatar: '../assets/images/mali_png.png'
     },
     {
         name: 'پیشرفت اجرایی',
-        avatar: '../assets/images/ejra_png.jpg'
+        avatar: '../assets/images/ejra_png.png'
     }
 ]

@@ -18,7 +18,6 @@ import { FiltersTabBar } from '../components/Table/FiltersTabBar';
 import Loading from '../components/Loading'
 import Table, { TableHeader } from '../components/Table'
 
-import { createDataDb, insertData } from '../db/db'
 /* import { data } from '../mock/data'*/
 
 import { getSpItems } from '../api'
@@ -26,6 +25,15 @@ import { getSpItems } from '../api'
 import { SQLite } from 'expo';
 const db = SQLite.openDatabase('db.db');
 
+const sumByParams = vals => R.reduce(
+    (current, val) => R.evolve({
+        network: R.add(val.network),
+        drain: R.add(val.drain),
+        equip: R.add(val.equip)
+    }, current),
+  R.head(vals),
+  R.tail(vals)
+)
 export default class HomeScreen extends React.Component {
     static navigationOptions = {
         title: 'تحویل پروژه ها',
@@ -81,19 +89,6 @@ export default class HomeScreen extends React.Component {
         this.setState({ period })
     }
 
-    componentWillMount(){
-        createDataDb()
-
-        getSpItems('GetMobileReport')
-            .then(data => {
-                insertData(data)
-            })
-            .catch(err => insertData([]))
-    }
-
-    componentDidMount(){
-    }
-
     componentDidUpdate(prevProps, prevState) {
         if (
             (prevState.contract !== this.state.contract) ||
@@ -105,7 +100,12 @@ export default class HomeScreen extends React.Component {
     }
 
     render() {
-        let { loading } = this.state
+        let { loading, data } = this.state
+        let newData = R.pipe(
+            R.groupBy(R.prop('type')),
+            R.map(sumByParams),
+            R.values
+        )(data)
         return (
             <View style={styles.container}>
 
@@ -115,7 +115,7 @@ export default class HomeScreen extends React.Component {
 
                     {loading ?
                      (<ActivityIndicator style={styles.activityIndicator} size="large" color="#03A9F4" />) :
-                     (<Table items={this.state.data} />)
+                     (<Table items={newData} />)
                     }
 
                     <View style={styles.blankSpace}></View>

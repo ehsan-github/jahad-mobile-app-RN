@@ -13,7 +13,7 @@ export const TableHeader = () => (
     <Card containerStyle={styles.headerContainerStyle} style={styles.tableHeader}>
         <View style={styles.headerCard}>
             <Text style={styles.headerText}>میانگین</Text>
-            <Text style={styles.headerText}>دوره ماقبل آخر</Text>
+            <Text style={styles.headerText}>ماقبل آخر</Text>
             <Text style={styles.headerText}>دوره آخر</Text>
             <Text style={styles.headerText}>پیمان</Text>
         </View>
@@ -31,7 +31,7 @@ const TableRow = ({ item }) => (
     </Card>
 );
 
-const strip = number => number.toFixed(2);
+const strip = number => !number ? 0 : number.toFixed(0);
 
 export default class Table extends Component{
 
@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
     },
     cardText: {
         textAlign: 'center',
+        width: '25%'
     },
     tableHeader: {
         position: 'absolute',

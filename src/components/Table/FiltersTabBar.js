@@ -10,13 +10,11 @@ import {
 } from 'react-native';
 import { Col, Row, Grid } from "react-native-easy-grid";
 
-import DropDown2 from './DropDown2.js'
+import DropDown2 from '../DropDown2.js'
 
 import { SQLite } from 'expo';
 
 const db = SQLite.openDatabase('db.db');
-
-import DropDown from './DropDown';
 
 import R from 'ramda';
 

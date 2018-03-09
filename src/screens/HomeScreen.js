@@ -1,11 +1,8 @@
 import React from 'react';
 import {
-    Image,
-    Platform,
     ScrollView,
     StyleSheet,
     Text,
-    TouchableOpacity,
     View,
 } from 'react-native';
 
@@ -14,6 +11,8 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import { MonoText } from '../components/StyledText';
 
 import { createAreaDb, insertAreaData, createContractDb, insertContractData, createPeriodDb, insertPeriodData, createTypeDb, insertTypeData } from '../db/db'
+import { createDataDb, insertData } from '../db/db'
+import { createArzeshYabiDataDb, insertArzeshYabiData } from '../db/db'
 
 import { menues } from '../mock/data'
 import { getSpItems } from '../api'
@@ -37,6 +36,20 @@ export default class HomeScreen extends React.Component {
     };
 
     componentWillMount(){
+        createDataDb()
+        getSpItems('GetMobileReport')
+            .then(data => {
+                insertData(data)
+            })
+            .catch(err => insertData([]))
+
+        createArzeshYabiDataDb()
+        getSpItems('GetEvaluationMobile')
+            .then(data => {
+               insertArzeshYabiData(data)
+            })
+            .catch(err => insertArzeshYabiData([]))
+
         createAreaDb()
         createContractDb()
         createPeriodDb()
@@ -61,12 +74,26 @@ export default class HomeScreen extends React.Component {
     }
 
     _renderCard = (obj, i) => {
+        let avatar
+        switch(i){
+            case 1:
+                avatar = require('../assets/images/arzeshyabi_png.png')
+                break;
+            case 2:
+                avatar = require('../assets/images/mali_png.png')
+                break;
+            case 3:
+                avatar = require('../assets/images/ejra_png.png')
+                break;
+            default:
+                avatar = require('../assets/images/tahvil_png.png')
+        }
         return (
             <Card key={i} title={obj.name}>
                 <View style={styles.card}>
                     <Avatar
                         large
-                        source={{ uri: obj.avatar }}
+                        source={avatar}
                         activeOpacity={0.7}
                     />
                     <Text style={styles.cardText}>

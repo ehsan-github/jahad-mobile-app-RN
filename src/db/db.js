@@ -122,7 +122,7 @@ export const insertArzeshYabiData = data => {
         if (data.length > 0){
             data.forEach(row => {
                 tx.executeSql(
-                    'insert into arzeshyabi (contract, period, score, status, type) values (?, ?, ?, ?, ?)', [row.contractID, row.periodId, row.score, row.status, row.typeId]);
+                    'insert into arzeshyabi (contract, period, score, status, type) values (?, ?, ?, ?, ?)', [row.ContractID, row.PeriodID, row.TotalScore, row.Status, row.Type]);
             });
         }
     });

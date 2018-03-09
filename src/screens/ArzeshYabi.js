@@ -12,17 +12,35 @@ import {
 import R from 'ramda';
 
 import { MonoText } from '../components/StyledText';
-import { FiltersTabBar } from '../components/ArzeshYabiTable/FiltersTabBar';
+import { FiltersTabBar } from '../components/ArzeshYabi/FiltersTabBar';
 import Loading from '../components/Loading'
-import Table, { TableHeader } from '../components/ArzeshYabiTable'
-
-import { createArzeshYabiDataDb, insertArzeshYabiData } from '../db/db'
-/* import { data } from '../mock/data'*/
+import Table, { TableHeader } from '../components/ArzeshYabi/index.js'
 
 import { getSpItems } from '../api'
 
 import { SQLite } from 'expo';
 const db = SQLite.openDatabase('db.db');
+
+
+
+const buildData = contractOptions => vals => {
+    let contract = R.pipe(
+        R.head,
+        R.prop('contract'),
+        x => R.find(R.propEq('id', x), contractOptions),
+        R.prop('name')
+    )(vals)
+    let mean = R.mean(R.map(R.prop('score'), vals))
+    let sorted = R.sort(R.descend(R.prop('period')), vals)
+    let last = R.prop('score', R.head(vals))
+    let semiLast = R.prop('score', R.head(R.tail(vals)))
+    return {
+        contract,
+        mean,
+        last,
+        semiLast
+    }
+}
 
 export default class HomeScreen extends React.Component {
     static navigationOptions = {
@@ -40,22 +58,37 @@ export default class HomeScreen extends React.Component {
         super(props)
         this.state = {
             data: [],
-            contract: null,
+            contract: -1,
             contractOptions: [],
-            type: null,
+            type: -1,
+            allContractOptions: [],
             loading: true
         }
         this.contractFilterChanged= this.contractFilterChanged.bind(this)
         this.typeFilterChanged= this.typeFilterChanged.bind(this)
     }
 
+    componentWillMount(){
+        db.transaction(
+            tx => {
+                tx.executeSql(
+                    'select * from contracts',
+                    [],
+                    (_, { rows: { _array } }) => {
+                        this.setState({ allContractOptions: _array })
+                    }
+                )
+            }
+        )
+    }
+
     updateData() {
         this.setState({ loading: true })
-        let { contract, contractOptions, type } } = this.state
+        let { contract, contractOptions, type } = this.state
         let typeQuery = (type == -1) ? '' : `and type = ${type}`
         let query = (contract == -1)
-                  ? `select * from items where contract in (${contractOptions.join(',')}) ${typeQuery};`
-                  : `select * from items where contract = ${contract} ${typeQuery};`
+                  ? `select * from arzeshyabi where contract in (${contractOptions.join(',')}) ${typeQuery};`
+                  : `select * from arzeshyabi where contract = ${contract} ${typeQuery};`
 
         db.transaction(
             tx => {
@@ -75,35 +108,26 @@ export default class HomeScreen extends React.Component {
         })
     }
 
-    periodFilterChanged({ period }){
-        this.setState({ period })
+    typeFilterChanged(type){
+        this.setState({ type })
     }
-
-    componentWillMount(){
-        createArzeshYabiDataDb()
-
-        getSpItems('GetEvaluationMobile')
-            .then(data => {
-               insertArzeshYabiData(data)
-            })
-            .catch(err => insertArzeshYabiData([]))
-    }
-
-    componentDidMount(){
-    }
-
     componentDidUpdate(prevProps, prevState) {
         if (
             (prevState.contract !== this.state.contract) ||
             (prevState.contractOptions !== this.state.contractOptions) ||
-            (!R.equals(prevState.period, this.state.period))
+            (prevState.type !== this.state.type)
         ) {
             this.updateData()
         }
     }
 
     render() {
-        let { loading } = this.state
+        let { loading, data, allContractOptions } = this.state
+        let newData = R.pipe(
+            R.groupBy(R.prop('contract')),
+            R.map(buildData(allContractOptions)),
+            R.values
+        )(data)
         return (
             <View style={styles.container}>
 
@@ -113,7 +137,7 @@ export default class HomeScreen extends React.Component {
 
                     {loading ?
                      (<ActivityIndicator style={styles.activityIndicator} size="large" color="#03A9F4" />) :
-                     (<Table items={this.state.data} />)
+                     (<Table items={newData} />)
                     }
 
                     <View style={styles.blankSpace}></View>

@@ -10,13 +10,11 @@ import {
 } from 'react-native';
 import { Col, Row, Grid } from "react-native-easy-grid";
 
-import DropDown2 from './DropDown2.js'
+import DropDown2 from '../DropDown2'
 
 import { SQLite } from 'expo';
 
 const db = SQLite.openDatabase('db.db');
-
-import DropDown from './DropDown';
 
 import R from 'ramda';
 
@@ -25,15 +23,15 @@ export class FiltersTabBar extends React.Component {
     constructor(props){
         super(props)
         this.state = {
-            period: { options: [], value: -1 },
+            type: { options: [], value: -1 },
             area: { options: [], value: -1 },
             contract: { options: [], value: -1 }
         }
         this.getAreaDataAndSetIt = this.getAreaDataAndSetIt.bind(this)
         this.getContractDataAndSetIt = this.getContractDataAndSetIt.bind(this)
-        this.getPeriodDataAndSetIt = this.getPeriodDataAndSetIt.bind(this)
+        this.getTypeDataAndSetIt = this.getTypeDataAndSetIt.bind(this)
 
-        this.periodDropdownChanged = this.periodDropdownChanged.bind(this)
+        this.typeDropdownChanged = this.typeDropdownChanged.bind(this)
         this.areaDropdownChanged = this.areaDropdownChanged.bind(this)
         this.contractDropdownChanged = this.contractDropdownChanged.bind(this)
     }
@@ -41,7 +39,7 @@ export class FiltersTabBar extends React.Component {
     componentWillMount(){
         this.getAreaDataAndSetIt()
         this.getContractDataAndSetIt()
-        this.getPeriodDataAndSetIt()
+        this.getTypeDataAndSetIt()
     }
 
     getAreaDataAndSetIt(){
@@ -75,29 +73,28 @@ export class FiltersTabBar extends React.Component {
         )
     }
 
-    getPeriodDataAndSetIt(){
+    getTypeDataAndSetIt(){
         db.transaction(
             tx => {
                 tx.executeSql(
-                    `select * from periods`,
+                    `select * from types`,
                     [],
                     (_, { rows: { _array } }) => {
-                        this.setState({ period: { options: _array, value: '-1'} })
+                        this.setState({ type: { options: _array, value: '-1'} })
                     }
                 )
             }
         )
     }
 
-    periodDropdownChanged(i){
-        let { period: oldValue } = this.state
-        let value = oldValue.options[i-1]
-        let newValue = R.assoc('value', value ? value.id : -1, oldValue)
+    typeDropdownChanged(i){
+        let { type: oldValue } = this.state
+        let value = oldValue.options[i-1] ? oldValue.options[i-1].id : -1
+        let newValue = R.assoc('value', value, oldValue)
         this.setState({
-            period: newValue
+            type: newValue
         })
-
-        this.props.periodChanged({ period: value || {} })
+        this.props.typeChanged(value)
     }
 
     areaDropdownChanged(i){
@@ -121,10 +118,10 @@ export class FiltersTabBar extends React.Component {
     }
 
     render() {
-        let periodOptions = R.prepend({ id: -1, name: 'همه' }, this.state.period.options)
-        let periodValue = this.state.period.value
-        let periodIndex = R.findIndex(R.propEq('id', periodValue), periodOptions)
-        if (periodIndex == -1) periodIndex = 0
+        let typeOptions = R.prepend({ id: -1, name: 'همه' }, this.state.type.options)
+        let typeValue = this.state.type.value
+        let typeIndex = R.findIndex(R.propEq('id', typeValue), typeOptions)
+        if (typeIndex == -1) typeIndex = 0
 
         let areaOptions = R.prepend({ id: -1, name: 'همه' }, this.state.area.options)
         let areaValue = this.state.area.value
@@ -137,7 +134,7 @@ export class FiltersTabBar extends React.Component {
         return (
             <View style={styles.tabBarInfoContainer}>
                 <View style={styles.tabBarFilterRight}>
-                    <DropDown2 name="دوره" myref="1" style={styles.dorpDown} defaultValue={periodIndex} options={periodOptions} handleValueChange={this.periodDropdownChanged}/> 
+                    <DropDown2 name="نوع" myref="1" style={styles.dorpDown} defaultValue={typeIndex} options={typeOptions} handleValueChange={this.typeDropdownChanged}/> 
                 </View>
                 <View style={styles.tabBarFilterMiddle}>
                     <DropDown2 middle name="حوزه" myref="2" style={styles.dropDown} defaultValue={areaIndex} options={areaOptions} handleValueChange={this.areaDropdownChanged}/> 
