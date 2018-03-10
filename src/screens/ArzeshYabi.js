@@ -9,16 +9,14 @@ import {
     View,
     ActivityIndicator,
 } from 'react-native';
-import { WebBrowser } from 'expo';
-import { Col, Row, Grid } from "react-native-easy-grid";
 import R from 'ramda';
 
 import { MonoText } from '../components/StyledText';
-import { FiltersTabBar } from '../components/Table/FiltersTabBar';
+import { FiltersTabBar } from '../components/ArzeshYabiTable/FiltersTabBar';
 import Loading from '../components/Loading'
-import Table, { TableHeader } from '../components/Table'
+import Table, { TableHeader } from '../components/ArzeshYabiTable'
 
-import { createDataDb, insertData } from '../db/db'
+import { createArzeshYabiDataDb, insertArzeshYabiData } from '../db/db'
 /* import { data } from '../mock/data'*/
 
 import { getSpItems } from '../api'
@@ -28,7 +26,7 @@ const db = SQLite.openDatabase('db.db');
 
 export default class HomeScreen extends React.Component {
     static navigationOptions = {
-        title: 'تحویل پروژه ها',
+        title: 'ارزشیابی عملکرد',
         headerStyle: {
             backgroundColor: '#03A9F4',
         },
@@ -44,20 +42,20 @@ export default class HomeScreen extends React.Component {
             data: [],
             contract: null,
             contractOptions: [],
-            period: {},
+            type: null,
             loading: true
         }
         this.contractFilterChanged= this.contractFilterChanged.bind(this)
-        this.periodFilterChanged= this.periodFilterChanged.bind(this)
+        this.typeFilterChanged= this.typeFilterChanged.bind(this)
     }
 
     updateData() {
         this.setState({ loading: true })
-        let { contract, contractOptions, period: { startTime, endTime } } = this.state
-        let periodQuery = startTime ? `and date between date('${startTime}') and date('${endTime}')` : ''
+        let { contract, contractOptions, type } } = this.state
+        let typeQuery = (type == -1) ? '' : `and type = ${type}`
         let query = (contract == -1)
-                  ? `select * from items where contract in (${contractOptions.join(',')}) ${periodQuery};`
-                  : `select * from items where contract = ${contract} ${periodQuery};`
+                  ? `select * from items where contract in (${contractOptions.join(',')}) ${typeQuery};`
+                  : `select * from items where contract = ${contract} ${typeQuery};`
 
         db.transaction(
             tx => {
@@ -82,13 +80,13 @@ export default class HomeScreen extends React.Component {
     }
 
     componentWillMount(){
-        createDataDb()
+        createArzeshYabiDataDb()
 
-        getSpItems('GetMobileReport')
+        getSpItems('GetEvaluationMobile')
             .then(data => {
-                insertData(data)
+               insertArzeshYabiData(data)
             })
-            .catch(err => insertData([]))
+            .catch(err => insertArzeshYabiData([]))
     }
 
     componentDidMount(){
@@ -123,7 +121,7 @@ export default class HomeScreen extends React.Component {
 
                 <FiltersTabBar
                     contractChanged={this.contractFilterChanged}
-                    periodChanged={this.periodFilterChanged}
+                    typeChanged={this.typeFilterChanged}
                 />
 
             </View>

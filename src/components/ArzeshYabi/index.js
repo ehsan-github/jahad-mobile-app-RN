@@ -12,10 +12,10 @@ import Loading from '../Loading';
 export const TableHeader = () => (
     <Card containerStyle={styles.headerContainerStyle} style={styles.tableHeader}>
         <View style={styles.headerCard}>
-            <Text style={styles.headerText}>تجهیز</Text>
-            <Text style={styles.headerText}>زهکش</Text>
-            <Text style={styles.headerText}>شبکه</Text>
-            <Text style={styles.headerText}>نوع</Text>
+            <Text style={styles.headerText}>میانگین</Text>
+            <Text style={styles.headerText}>دوره ماقبل آخر</Text>
+            <Text style={styles.headerText}>دوره آخر</Text>
+            <Text style={styles.headerText}>پیمان</Text>
         </View>
     </Card>
 )
@@ -23,10 +23,10 @@ export const TableHeader = () => (
 const TableRow = ({ item }) => (
     <Card containerStyle={styles.containerStyle}>
         <View style={styles.card}>
-            <Text style={styles.cardText}>{strip(item.equip)}</Text>
-            <Text style={styles.cardText}>{strip(item.drain)}</Text>
-            <Text style={styles.cardText}>{strip(item.network)}</Text>
-            <Text style={styles.cardText}>{item.type}</Text>
+            <Text style={styles.cardText}>{strip(item.mean)}</Text>
+            <Text style={styles.cardText}>{strip(item.semiLast)}</Text>
+            <Text style={styles.cardText}>{strip(item.last)}</Text>
+            <Text style={styles.cardText}>{item.contract}</Text>
         </View>
     </Card>
 );

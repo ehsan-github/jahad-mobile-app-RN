@@ -3,10 +3,10 @@ import R from 'ramda'
 
 const db = SQLite.openDatabase('db.db');
 
-export const createDb = () => {
+export const createDataDb = () => {
     db.transaction(tx => {
         tx.executeSql(
-            'create table if not exists items (id integer primary key not null, contract int, type text, network real, drain real, equip real, date text);'
+            'create table items (id integer primary key not null, contract int, type text, network real, drain real, equip real, date text);'
         );
     });
 };
@@ -14,13 +14,14 @@ export const createDb = () => {
 export const insertData = data => {
     db.transaction(tx => {
         tx.executeSql('delete from items');
-        data.forEach(row => {
-            tx.executeSql(
-                'insert into items (contract, type, network, drain, equip, date) values (?, ?, ?, ?, ?, ?)', [row.contract, row.type, row.network, row.drain, row.equip, row.date]);
-        });
+        if (data.length > 0){
+            data.forEach(row => {
+                tx.executeSql(
+                    'insert into items (contract, type, network, drain, equip, date) values (?, ?, ?, ?, ?, ?)', [row.ContractID, row.Type, row.Network, row.Drainage, row.Equipped, row.CreateDate]);
+            });
+        }
     });
 };
-
 // Areas Data
 export const createAreaDb = () => {
     db.transaction(tx => {
@@ -33,12 +34,15 @@ export const createAreaDb = () => {
 export const insertAreaData = data => {
     db.transaction(tx => {
         tx.executeSql('delete from areas');
-        data.forEach(row => {
-            tx.executeSql(
-                'insert into areas (id, name) values (?, ?)',
-                [row.id, row.name]
-            );
-        });
+        // console.warn('hre', data)
+        if (data.length > 0){
+            data.forEach(row => {
+                tx.executeSql(
+                    'insert into areas (id, name) values (?, ?)',
+                    [row.id, row.name]
+                );
+            });
+        }
     });
 };
 
@@ -54,10 +58,12 @@ export const createContractDb = () => {
 export const insertContractData = data => {
     db.transaction(tx => {
         tx.executeSql('delete from contracts');
-        data.forEach(row => {
-            tx.executeSql(
-                'insert into contracts (id, areaId, name) values (?, ?, ?)', [row.id, row.areaId, row.name]);
-        });
+        if (data.length > 0){
+            data.forEach(row => {
+                tx.executeSql(
+                    'insert into contracts (id, areaId, name) values (?, ?, ?)', [row.id, row.areaId, row.name]);
+            });
+        }
     });
 };
 
@@ -73,28 +79,51 @@ export const createPeriodDb = () => {
 export const insertPeriodData = data => {
     db.transaction(tx => {
         tx.executeSql('delete from periods');
-        data.forEach(row => {
-            tx.executeSql(
-                'insert into periods (name, startTime, endTime) values (?, ?, ?)', [row.name, row.startTime, row.endTime]);
-        });
+        if (data.length > 0){
+            data.forEach(row => {
+                tx.executeSql(
+                    'insert into periods (id, name, startTime, endTime) values (?, ?, ?, ?)', [row.id, row.name, row.startDate, row.endDate]);
+            });
+        }
     });
 };
 
-// Menu Data
-// export const createMenuDb = () => {
-//     db.transaction(tx => {
-//         tx.executeSql(
-//             'create table if not exists menues (id integer primary key not null, name text, startTime text, endTime text);'
-//         );
-//     });
-// };
+export const createTypeDb = () => {
+    db.transaction(tx => {
+        tx.executeSql(
+            'create table types (id integer primary key not null, name text);'
+        );
+    });
+};
 
-// export const insertMenuData = data => {
-//     db.transaction(tx => {
-//         tx.executeSql('delete from periods');
-//         data.forEach(row => {
-//             tx.executeSql(
-//                 'insert into periods (name, startTime, endTime) values (?, ?, ?)', [row.name, row.startTime, row.endTime]);
-//         });
-//     });
-// };
+export const insertTypeData = data => {
+    db.transaction(tx => {
+        tx.executeSql('delete from types');
+        if (data.length > 0){
+            data.forEach(row => {
+                tx.executeSql(
+                    'insert into types (id, name) values (?, ?)', [row.id, row.name]);
+            });
+        }
+    });
+};
+
+export const createArzeshYabiDataDb = () => {
+    db.transaction(tx => {
+        tx.executeSql(
+            'create table arzeshyabi (id integer primary key not null, contract int, period int, score int, status text, type int);'
+        );
+    });
+};
+
+export const insertArzeshYabiData = data => {
+    db.transaction(tx => {
+        tx.executeSql('delete from arzeshyabi');
+        if (data.length > 0){
+            data.forEach(row => {
+                tx.executeSql(
+                    'insert into arzeshyabi (contract, period, score, status, type) values (?, ?, ?, ?, ?)', [row.contractID, row.periodId, row.score, row.status, row.typeId]);
+            });
+        }
+    });
+};

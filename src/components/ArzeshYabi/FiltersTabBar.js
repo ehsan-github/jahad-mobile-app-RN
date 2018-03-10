@@ -81,7 +81,9 @@ export class FiltersTabBar extends React.Component {
                 tx.executeSql(
                     `select * from periods`,
                     [],
-                    (_, { rows: { _array } }) => this.setState({ period: { options: _array, value: '-1'} })
+                    (_, { rows: { _array } }) => {
+                        this.setState({ period: { options: _array, value: '-1'} })
+                    }
                 )
             }
         )
@@ -138,7 +140,7 @@ export class FiltersTabBar extends React.Component {
                     <DropDown2 name="دوره" myref="1" style={styles.dorpDown} defaultValue={periodIndex} options={periodOptions} handleValueChange={this.periodDropdownChanged}/> 
                 </View>
                 <View style={styles.tabBarFilterMiddle}>
-                    <DropDown2 name="حوزه" myref="2" style={styles.dropDown} defaultValue={areaIndex} options={areaOptions} handleValueChange={this.areaDropdownChanged}/> 
+                    <DropDown2 middle name="حوزه" myref="2" style={styles.dropDown} defaultValue={areaIndex} options={areaOptions} handleValueChange={this.areaDropdownChanged}/> 
                 </View>
                 <View style={styles.tabBarFilterLeft}>
                     <DropDown2 name="پیمان" myref="3" style={styles.dropDown} defaultValue={contractIndex} options={contractOptions} handleValueChange={this.contractDropdownChanged}/> 
@@ -151,6 +153,7 @@ export class FiltersTabBar extends React.Component {
 const styles = StyleSheet.create({
     tabBarInfoContainer: {
         display: 'flex',
+        flexDirection: 'row-reverse',
         flexWrap: 'wrap',
         flex: 1,
         position: 'absolute',
@@ -182,22 +185,25 @@ const styles = StyleSheet.create({
         direction: 'rtl'
     },
     tabBarFilterRight: {
-        right: '5%',
-        position: 'absolute',
-        flex: .5,
-        width: 50
+        /* right: '5%',*/
+        /* position: 'absolute',*/
+        flex: .33,
+        flexBasis: .33,
+        /* width: 50*/
     },
     tabBarFilterMiddle: {
-        left: '50%',
-        position: 'absolute',
-        flex: .5,
-        width: 50
+        /* left: '50%',*/
+        /* position: 'absolute',*/
+        flex: .34,
+        flexBasis: .34,
+        /* width: 50*/
     },
     tabBarFilterLeft: {
-        left: '17%',
-        position: 'absolute',
-        flex: .5,
-        width: 50
+        /* left: '17%',*/
+        /* position: 'absolute',*/
+        flex: .33,
+        flexBasis: .33,
+        /* width: 50*/
     },
     col: {
         margin: -70

@@ -45,6 +45,7 @@ export default class DropDown extends React.Component {
     render() {
         let options = R.map(R.prop('name'), this.props.options)
         let { defaultValue, name } = this.props
+        let dorpDownListStyle = this.props.middle ? {marginLeft: '-33%', marginRight: '33%'} : {}
         /* console.warn(options[defaultValue])*/
         return (
         <View style={styles.dropdown}>
@@ -62,7 +63,7 @@ export default class DropDown extends React.Component {
                 options={options}
                 renderRow={this._renderRow}
                 textStyle={styles.dropdown_2_text}
-                dropdownStyle={styles.dropdown_2_dropdown}
+                dropdownStyle={[styles.dropdown_2_dropdown, dorpDownListStyle]}
             />
         </View>
         )
@@ -72,7 +73,7 @@ export default class DropDown extends React.Component {
 const styles = StyleSheet.create({
     dropdown_2: {
         alignSelf: 'flex-end',
-        width: 100,
+        width: '99%',
         marginTop: 32,
         borderWidth: 0,
         borderRadius: 3,
@@ -87,16 +88,17 @@ const styles = StyleSheet.create({
         textAlignVertical: 'center',
     },
     dropdown_2_dropdown: {
-        width: 100,
-        height: 200,
+        width: '100%',
+        height: 250,
         borderColor: 'cornflowerblue',
         borderWidth: 2,
         borderRadius: 3,
     },
     dropdown_2_row: {
         flexDirection: 'row',
+        direction: 'rtl',
         height: 40,
-        alignItems: 'center',
+        alignItems: 'stretch',
     },
     dropdown_2_image: {
         marginLeft: 4,
@@ -108,6 +110,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: 'navy',
         textAlignVertical: 'center',
+        textAlign: 'right',
         direction: 'rtl'
     },
     dropdown: {},

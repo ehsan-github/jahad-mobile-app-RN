@@ -13,9 +13,9 @@ import { Card, Button, Avatar, Badge } from 'react-native-elements'
 import { Col, Row, Grid } from "react-native-easy-grid";
 import { MonoText } from '../components/StyledText';
 
-import { createAreaDb, insertAreaData, createContractDb, insertContractData, createPeriodDb, insertPeriodData } from '../db/db'
+import { createAreaDb, insertAreaData, createContractDb, insertContractData, createPeriodDb, insertPeriodData, createTypeDb, insertTypeData } from '../db/db'
 
-import { menues, areas, contracts, periods } from '../mock/data'
+import { menues } from '../mock/data'
 import { getSpItems } from '../api'
 
 export default class HomeScreen extends React.Component {
@@ -38,38 +38,26 @@ export default class HomeScreen extends React.Component {
 
     componentWillMount(){
         createAreaDb()
-        insertAreaData(areas)
         createContractDb()
-        insertContractData(contracts)
         createPeriodDb()
-        insertPeriodData(periods)
+        createTypeDb()
 
-        /* getSpItems('GetAreas')
-         *     .map(x => JSON.parse(x))
-         *     .fork(
-         *         err => console.warn(err),
-         *         areas => {
-         *             insertAreaData(areas)
-         *         }
-         * )
+        getSpItems('GetAreas')
+            .then(areas => insertAreaData(areas))
+            .catch(err => insertAreaData([]))
 
-         * getSpItems('GetContracts')
-         *     .map(x => JSON.parse(x))
-         *     .fork(
-         *         err => console.warn(err),
-         *         contracts => {
-         *             insertContractData(contracts)
-         *         }
-         * )
+        getSpItems('GetContracts')
+            .then(contracts => insertContractData(contracts))
+            .catch(err => insertContractData([]))
 
-         * getSpItems('GetPeriods')
-         *     .map(x => JSON.parse(x))
-         *     .fork(
-         *         err => console.warn(err),
-         *         periods => {
-         *             insertPeriodData(periods)
-         *         }
-         * )*/
+        getSpItems('GetPeriods')
+            .then(periods => insertPeriodData(periods))
+            .catch(err => insertPeriodData([]))
+
+        getSpItems('GetEavluationTypes')
+            .then(types => insertTypeData(types))
+            .catch(err => insertTypeData([]))
+
     }
 
     _renderCard = (obj, i) => {

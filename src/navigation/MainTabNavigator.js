@@ -7,22 +7,18 @@ import Colors from '../constants/Colors';
 
 import HomeScreen from '../screens/HomeScreen';
 import Tahvil from '../screens/Tahvil';
-import Second from '../screens/Second';
-import Third from '../screens/Third';
+import ArzeshYabi from '../screens/ArzeshYabi';
 import SettingsScreen from '../screens/SettingsScreen';
 
 const HomeDrawer = StackNavigator({
     Home: {
         screen: HomeScreen,
     },
-    تحویل: {
+    'تحویل پروژه ها': {
         screen: Tahvil,
     },
-    Second: {
-        screen: Second,
-    },
-    Third: {
-        screen: Third,
+    'ارزشیابی عملکرد': {
+        screen: ArzeshYabi,
     }
 }, {
     /* headerMode: 'none',*/
@@ -40,37 +36,5 @@ export default StackNavigator (
             screen: SettingsScreen,
         },
     },
-    /* {
-     *     navigationOptions: ({ navigation }) => ({
-     *         tabBarIcon: ({ focused }) => {
-     *             const { routeName } = navigation.state;
-     *             let iconName;
-     *             switch (routeName) {
-     *                 case 'Home':
-     *                     iconName =
-     *                         Platform.OS === 'ios'
-     *                         ? `ios-home${focused ? '' : '-outline'}`
-     *                         : `md-home`
-     *                     break;
-     *                 case 'Settings':
-     *                     iconName =
-     *                         Platform.OS === 'ios' ? `ios-options${focused ? '' : '-outline'}` : 'md-options';
-     *             }
-     *             return (
-     *                 <Ionicons
-     *                     name={iconName}
-     *                     size={28}
-     *                     style={{ marginBottom: -3 }}
-     *                     color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
-     *                 />
-     *             );
-     *         },
-     *     }),
-     *     headerMode: 'float',
-     *     tabBarComponent: TabBarBottom,
-     *     tabBarPosition: 'bottom',
-     *     animationEnabled: false,
-     *     swipeEnabled: false,
-     * }*/
 );
 

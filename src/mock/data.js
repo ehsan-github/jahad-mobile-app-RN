@@ -1,6 +1,6 @@
 export const data = [
     {
-        contract: 1,
+        contract: 237,
         type: 'sath',
         network: 1,
         drain: 1,
@@ -8,7 +8,7 @@ export const data = [
         date: '2018-01-01'
     },
     {
-        contract: 2,
+        contract: 238,
         type: 'tajhiz',
         network: 2.1,
         drain: 2.1,
@@ -103,19 +103,19 @@ export const periods = [
 
 export const menues = [
     {
-        name: 'تحویل',
-        avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
+        name: 'تحویل پروژه ها',
+        avatar: '../assets/images/tahvil_png.jpg'
     },
     {
-        name: 'Second',
-        avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
+        name: 'ارزشیابی عملکرد',
+        avatar: '../assets/images/arzeshyabi_png.jpg'
     },
     {
-        name: 'Third',
-        avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
+        name: 'اعتبارات و هزینه ها',
+        avatar: '../assets/images/mali_png.jpg'
     },
     {
-        name: 'Fourth',
-        avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
+        name: 'پیشرفت اجرایی',
+        avatar: '../assets/images/ejra_png.jpg'
     }
 ]

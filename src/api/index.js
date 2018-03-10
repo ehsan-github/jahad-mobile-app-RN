@@ -5,7 +5,22 @@ import { getApiF, postApiF, path } from './utils'
 // )
 //     .chain(path(r => r.ListItemEntityTypeFullName))
 
-export const getSpItems = spName => postApiF(
-    '/_layouts/15/reporting/service.aspx/getspdata',
+export const getSpItems0 = spName => postApiF(
+    'http://79.127.32.69:6161/service.aspx/getSpData',
     { spName }
 )
+
+export const getSpItems = spName => fetch(
+    'http://79.127.32.69:6161/service.aspx/getSpData',
+    {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json, text/javascript, */*; q=0.01',
+            'Content-Type': 'application/json; charset=UTF-8'
+        },
+        body: JSON.stringify({ spName })
+    }
+)
+    .then(res => res.json())
+    .then(x => x.d)
+    .then(x => JSON.parse(x))

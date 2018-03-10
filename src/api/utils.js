@@ -30,8 +30,8 @@ const getOpt = { method: 'GET' }
 const postOpt = { method: 'POST' }
 const headerOpt = (...headers) => ({ headers: R.mergeAll(headers) })
 
-const acceptHdr = { Accept: 'application/json;odata=verbose' }
-const contentHdr = { 'Content-Type': 'application/json;odata=verbose' }
+const acceptHdr = { Accept: 'application/json, text/javascript, */*; q=0.01' }
+const contentHdr = { 'Content-Type': 'application/json; charset=UTF-8' }
 const credHdr = { credentials: 'include' }
 
 // General request apis
@@ -45,7 +45,7 @@ export const getApiF = R.pipeK(
 export const postApiF = R.pipeK(
     (addr, body) => {
         body = JSON.stringify(body)
-        const opts = R.mergeAll([postOpt, headerOpt(acceptHdr, contentHdr, credHdr), { body }])
+        const opts = R.mergeAll([postOpt, headerOpt(acceptHdr, contentHdr), { body }])
         return fetchF(opts, addr)
     },
     json,
