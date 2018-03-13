@@ -6,7 +6,7 @@ const db = SQLite.openDatabase('db.db');
 export const createDataDb = () => {
     db.transaction(tx => {
         tx.executeSql(
-            'create table items (id integer primary key not null, contract int, type text, network real, drain real, equip real, date text);'
+            'create table if not exists items (id integer primary key not null, contract int, type text, network real, drain real, equip real, date text);'
         );
     });
 };
@@ -26,7 +26,7 @@ export const insertData = data => {
 export const createAreaDb = () => {
     db.transaction(tx => {
         tx.executeSql(
-            'create table areas (id integer primary key not null, name text not null);'
+            'create table if not exists areas (id integer primary key not null, name text not null);'
         );
     });
 };
@@ -50,7 +50,7 @@ export const insertAreaData = data => {
 export const createContractDb = () => {
     db.transaction(tx => {
         tx.executeSql(
-            'create table contracts (id integer primary key not null, areaId int, name text);'
+            'create table if not exists contracts (id integer primary key not null, areaId int, name text);'
         );
     });
 };
@@ -71,7 +71,7 @@ export const insertContractData = data => {
 export const createPeriodDb = () => {
     db.transaction(tx => {
         tx.executeSql(
-            'create table periods (id integer primary key not null, name text, startTime text, endTime text);'
+            'create table if not exists periods (id integer primary key not null, name text, startTime text, endTime text);'
         );
     });
 };
@@ -91,7 +91,7 @@ export const insertPeriodData = data => {
 export const createTypeDb = () => {
     db.transaction(tx => {
         tx.executeSql(
-            'create table types (id integer primary key not null, name text);'
+            'create table if not exists types (id integer primary key not null, name text);'
         );
     });
 };
@@ -111,7 +111,7 @@ export const insertTypeData = data => {
 export const createArzeshYabiDataDb = () => {
     db.transaction(tx => {
         tx.executeSql(
-            'create table arzeshyabi (id integer primary key not null, contract int, period int, score int, status text, type int);'
+            'create table if not exists arzeshyabi (id integer primary key not null, contract int, period int, score int, status text, type int);'
         );
     });
 };
@@ -123,6 +123,26 @@ export const insertArzeshYabiData = data => {
             data.forEach(row => {
                 tx.executeSql(
                     'insert into arzeshyabi (contract, period, score, status, type) values (?, ?, ?, ?, ?)', [row.ContractID, row.PeriodID, row.TotalScore, row.Status, row.Type]);
+            });
+        }
+    });
+};
+
+export const createEjraDataDb = () => {
+    db.transaction(tx => {
+        tx.executeSql(
+            'create table if not exists ejra (id integer primary key not null, contract int, period int, network real, drain real, equip real);'
+        );
+    });
+};
+
+export const insertEjraData = data => {
+    db.transaction(tx => {
+        tx.executeSql('delete from ejra');
+        if (data.length > 0){
+            data.forEach(row => {
+                tx.executeSql(
+                    'insert into ejra (contract, period, network, drain, equip) values (?, ?, ?, ?, ?)', [row.ContractID, row.PeriodID, row.Network, row.Drainage, row.Equipped]);
             });
         }
     });

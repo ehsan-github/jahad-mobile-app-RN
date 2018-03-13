@@ -4,11 +4,23 @@ import { AppLoading, Asset, Font } from 'expo';
 import { Ionicons } from '@expo/vector-icons';
 import RootNavigation from './navigation/RootNavigation';
 
+import { createDataDb, createArzeshYabiDataDb, createEjraDataDb, createAreaDb, createContractDb, createPeriodDb, createTypeDb } from './db/db'
+
 export default class App extends React.Component {
   state = {
     isLoadingComplete: false,
   };
 
+    componentWillMount(){
+        createDataDb()
+        createArzeshYabiDataDb()
+        createEjraDataDb()
+
+        createAreaDb()
+        createContractDb()
+        createPeriodDb()
+        createTypeDb()
+    }
   render() {
     if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
       return (
@@ -32,8 +44,11 @@ export default class App extends React.Component {
   _loadResourcesAsync = async () => {
     return Promise.all([
       Asset.loadAsync([
-        require('./assets/images/robot-dev.png'),
-        require('./assets/images/robot-prod.png'),
+        require('./assets/images/arzeshyabi_png.jpg'),
+        require('./assets/images/ejra_png.png'),
+        require('./assets/images/mali_png.png'),
+        require('./assets/images/tahvil_png.png'),
+        require('./assets/images/tick.png'),
       ]),
       Font.loadAsync({
         // This is the font that we are using for our tab bar

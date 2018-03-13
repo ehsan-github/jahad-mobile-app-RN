@@ -10,9 +10,8 @@ import { Card, Button, Avatar, Badge } from 'react-native-elements'
 import { Col, Row, Grid } from "react-native-easy-grid";
 import { MonoText } from '../components/StyledText';
 
-import { createAreaDb, insertAreaData, createContractDb, insertContractData, createPeriodDb, insertPeriodData, createTypeDb, insertTypeData } from '../db/db'
-import { createDataDb, insertData } from '../db/db'
-import { createArzeshYabiDataDb, insertArzeshYabiData } from '../db/db'
+import { insertAreaData, insertContractData, insertPeriodData, insertTypeData } from '../db/db'
+import { insertData, insertArzeshYabiData, insertEjraData } from '../db/db'
 
 import { menues } from '../mock/data'
 import { getSpItems } from '../api'
@@ -21,7 +20,11 @@ export default class HomeScreen extends React.Component {
 
     constructor(props){
         super(props);
+        this.state = {
+            isLoading: false
+        }
         this._handleNavigation = this._handleNavigation.bind(this);
+        this._fetchNewData = this._fetchNewData.bind(this)
     }
 
     static navigationOptions = {
@@ -34,44 +37,6 @@ export default class HomeScreen extends React.Component {
           fontWeight: 'bold',
       },
     };
-
-    componentWillMount(){
-        createDataDb()
-        getSpItems('GetMobileReport')
-            .then(data => {
-                insertData(data)
-            })
-            .catch(err => insertData([]))
-
-        createArzeshYabiDataDb()
-        getSpItems('GetEvaluationMobile')
-            .then(data => {
-               insertArzeshYabiData(data)
-            })
-            .catch(err => insertArzeshYabiData([]))
-
-        createAreaDb()
-        createContractDb()
-        createPeriodDb()
-        createTypeDb()
-
-        getSpItems('GetAreas')
-            .then(areas => insertAreaData(areas))
-            .catch(err => insertAreaData([]))
-
-        getSpItems('GetContracts')
-            .then(contracts => insertContractData(contracts))
-            .catch(err => insertContractData([]))
-
-        getSpItems('GetPeriods')
-            .then(periods => insertPeriodData(periods))
-            .catch(err => insertPeriodData([]))
-
-        getSpItems('GetEavluationTypes')
-            .then(types => insertTypeData(types))
-            .catch(err => insertTypeData([]))
-
-    }
 
     _renderCard = (obj, i) => {
         let avatar
@@ -114,9 +79,61 @@ export default class HomeScreen extends React.Component {
             );
         }
 
+    componentWillMount(){
+        this._fetchNewData()
+    }
+
+    _fetchNewData(){
+        this.setState({ isLoading: true })
+
+        getSpItems('GetMobileReport')
+            .then(data => {
+                insertData(data)
+
+                getSpItems('GetWeeklyOperationMobile')
+                    .then(ejraData => {
+                        insertEjraData(ejraData)
+
+                        getSpItems('GetEvaluationMobile')
+                            .then(data => {
+                                insertArzeshYabiData(data)
+
+                                getSpItems('GetAreas')
+                                    .then(areas => insertAreaData(areas))
+                                    .catch(err => insertAreaData([]))
+
+                                getSpItems('GetContracts')
+                                    .then(contracts => insertContractData(contracts))
+                                    .catch(err => insertContractData([]))
+
+                                getSpItems('GetPeriods')
+                                    .then(periods => insertPeriodData(periods))
+                                    .catch(err => insertPeriodData([]))
+
+                                getSpItems('GetEavluationTypes')
+                                    .then(types => insertTypeData(types))
+                                    .catch(err => insertTypeData([]))
+
+                                this.setState({ isLoading: false })
+                            })
+                            .catch(err => insertArzeshYabiData([]))
+                    })
+                    .catch(err => insertEjraData([]))
+            })
+            .catch(err => insertData([]))
+    }
+
     render() {
+        let { isLoading } = this.state
         return (
             <View style={styles.container}>
+                <Button
+                    icon={isLoading ? {} : { name: 'cached' }}
+                    backgroundColor={isLoading ? '#03A9F4' : '#b7b7b7'}
+                    buttonStyle={styles.updateButton}
+                    onPress={this._fetchNewData}
+                    loading={isLoading}
+                    title={isLoading ? 'در حال به روزرسانی' : 'به روزرسانی'} />
                 <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
                     {menues.map((obj, index) => {
                         return this._renderCard(obj, index)

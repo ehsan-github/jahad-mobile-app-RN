@@ -9,42 +9,37 @@ import {
     View,
     ActivityIndicator,
 } from 'react-native';
+
 import R from 'ramda';
 
-import { MonoText } from '../components/StyledText';
-import { FiltersTabBar } from '../components/ArzeshYabi/FiltersTabBar';
-import Loading from '../components/Loading'
-import Table, { TableHeader } from '../components/ArzeshYabi/index.js'
+import { FiltersTabBar } from '../components/Ejraiee/FiltersTabBar';
+import Table, { TableHeader } from '../components/Ejraiee'
 
-import { getSpItems } from '../api'
+import Loading from '../components/Loading'
 
 import { SQLite } from 'expo';
 const db = SQLite.openDatabase('db.db');
 
+const sumByParams = vals => R.reduce(
+    (current, val) => R.evolve({
+        network: R.add(val.network),
+        drain: R.add(val.drain),
+        equip: R.add(val.equip)
+    }, current),
+  R.head(vals),
+  R.tail(vals)
+)
 
-
-const buildData = contractOptions => vals => {
-    let contract = R.pipe(
-        R.head,
-        R.prop('contract'),
-        x => R.find(R.propEq('id', x), contractOptions),
-        R.prop('name')
-    )(vals)
-    let mean = R.mean(R.map(R.prop('score'), vals))
-    /* let sorted = R.sort(R.descend(R.prop('period')), vals)*/
-    let last = R.prop('score', R.head(vals))
-    let semiLast = R.prop('score', R.head(R.tail(vals)))
-    return {
-        contract,
-        mean,
-        last,
-        semiLast
-    }
-}
+const subtractByParams = (total, done) =>
+    R.evolve({
+        network: R.subtract(total.network),
+        drain: R.subtract(total.drain),
+        equip: R.subtract(total.equip)
+    }, done)
 
 export default class HomeScreen extends React.Component {
     static navigationOptions = {
-        title: 'ارزشیابی عملکرد',
+        title: 'پیشرفت اجرایی',
         headerStyle: {
             backgroundColor: '#03A9F4',
         },
@@ -57,45 +52,75 @@ export default class HomeScreen extends React.Component {
     constructor(props){
         super(props)
         this.state = {
-            data: [],
-            contract: -1,
+            sathData: [],
+            operationData: [],
+            contract: null,
             contractOptions: [],
-            type: -1,
-            allContractOptions: [],
             loading: true
         }
-        this.contractFilterChanged= this.contractFilterChanged.bind(this)
-        this.typeFilterChanged= this.typeFilterChanged.bind(this)
-    }
-
-    componentWillMount(){
-        db.transaction(
-            tx => {
-                tx.executeSql(
-                    'select * from contracts',
-                    [],
-                    (_, { rows: { _array } }) => {
-                        this.setState({ allContractOptions: _array })
-                    }
-                )
-            }
-        )
+        this.contractFilterChanged = this.contractFilterChanged.bind(this)
+        this.updateOperationData = this.updateOperationData.bind(this)
     }
 
     updateData() {
         this.setState({ loading: true })
-        let { contract, contractOptions, type } = this.state
-        let typeQuery = (type == -1) ? '' : `and type = ${type}`
+        let { contract, contractOptions } = this.state
         let query = (contract == -1)
-                  ? `select * from arzeshyabi where contract in (${contractOptions.join(',')}) ${typeQuery};`
-                  : `select * from arzeshyabi where contract = ${contract} ${typeQuery};`
+                  ? `select * from items where contract in (${contractOptions.join(',')});`
+                  : `select * from items where contract = ${contract};`
 
         db.transaction(
             tx => {
                 tx.executeSql(
                     query,
                     [],
-                    (_, { rows: { _array } }) => setTimeout(()=> this.setState({ data: _array, loading: false }), 200)
+                    (_, { rows: { _array } }) => {
+                        let sathData = R.pipe(
+                            R.filter(R.propEq('type', 'سطح کل')),
+                            sumByParams,
+                        )(_array)
+                        this.updateOperationData(sathData)
+                    }
+                )
+            }
+        )
+    }
+
+    updateOperationData(sathData){
+        let { contract, contractOptions } = this.state
+        let query = (contract == -1)
+                  ? `select * from ejra where contract in (${contractOptions.join(',')});`
+                  : `select * from ejra where contract = ${contract};`
+
+        db.transaction(
+            tx => {
+                tx.executeSql(
+                    query,
+                    [],
+                    (_, { rows: { _array } }) => {
+                        let data = R.pipe(
+                            R.groupBy(R.prop('period')),
+                            R.map(sumByParams),
+                            R.values,
+                        )(_array)
+
+                        let last = data[0]
+                        let semiLast = data[1]
+                        let done = sumByParams(data)
+                        let remaining = subtractByParams(sathData, done)
+
+                        let operationData = [
+                            { type: 'دوره آخر', ...last },
+                            { type: 'ماقبل آخر', ...semiLast },
+                            { type: 'انجام شده تاکنون', ...done },
+                            { ...remaining, type: 'باقی مانده' }
+                        ]
+                        this.setState({
+                            sathData,
+                            operationData,
+                            loading: false
+                        })
+                    }
                 )
             }
         )
@@ -108,26 +133,18 @@ export default class HomeScreen extends React.Component {
         })
     }
 
-    typeFilterChanged(type){
-        this.setState({ type })
-    }
     componentDidUpdate(prevProps, prevState) {
         if (
             (prevState.contract !== this.state.contract) ||
-            (prevState.contractOptions !== this.state.contractOptions) ||
-            (prevState.type !== this.state.type)
+            (prevState.contractOptions !== this.state.contractOptions)
         ) {
             this.updateData()
         }
     }
 
     render() {
-        let { loading, data, allContractOptions } = this.state
-        let newData = R.pipe(
-            R.groupBy(R.prop('contract')),
-            R.map(buildData(allContractOptions)),
-            R.values
-        )(data)
+        let { loading, sathData, operationData } = this.state
+
         return (
             <View style={styles.container}>
 
@@ -137,7 +154,7 @@ export default class HomeScreen extends React.Component {
 
                     {loading ?
                      (<ActivityIndicator style={styles.activityIndicator} size="large" color="#03A9F4" />) :
-                     (<Table items={newData} />)
+                     (<Table items={[sathData, ...operationData]} />)
                     }
 
                     <View style={styles.blankSpace}></View>
@@ -145,7 +162,6 @@ export default class HomeScreen extends React.Component {
 
                 <FiltersTabBar
                     contractChanged={this.contractFilterChanged}
-                    typeChanged={this.typeFilterChanged}
                 />
 
             </View>
