@@ -55,10 +55,12 @@ export default class HomeScreen extends React.Component {
             sathData: [],
             operationData: [],
             contract: null,
+            period: null,
             contractOptions: [],
             loading: true
         }
         this.contractFilterChanged = this.contractFilterChanged.bind(this)
+        this.periodFilterChanged = this.periodFilterChanged.bind(this)
         this.updateOperationData = this.updateOperationData.bind(this)
     }
 
@@ -87,10 +89,11 @@ export default class HomeScreen extends React.Component {
     }
 
     updateOperationData(sathData){
-        let { contract, contractOptions } = this.state
+        let { contract, contractOptions, period } = this.state
+
         let query = (contract == -1)
-                  ? `select * from ejra where contract in (${contractOptions.join(',')});`
-                  : `select * from ejra where contract = ${contract};`
+                  ? `select * from ejraee where contract in (${contractOptions.join(',')});`
+                  : `select * from ejraee where contract = ${contract};`
 
         db.transaction(
             tx => {
@@ -98,10 +101,18 @@ export default class HomeScreen extends React.Component {
                     query,
                     [],
                     (_, { rows: { _array } }) => {
+
+                        let sort = period ? R.pipe(
+                            R.find(R.propEq('period', period)),
+                            R.prop('sort')
+                        )(_array) : 96.01
+
                         let data = R.pipe(
+                            R.filter(R.propSatisfies(R.gte(sort), 'sort')),
                             R.groupBy(R.prop('period')),
                             R.map(sumByParams),
                             R.values,
+                            R.sort(R.descend(R.prop('sort'))),
                         )(_array)
 
                         let last = data[0]
@@ -126,6 +137,10 @@ export default class HomeScreen extends React.Component {
         )
     }
 
+    periodFilterChanged({ period }){
+        this.setState({ period: period.id })
+    }
+
     contractFilterChanged({ value, options = this.state.contractOptions }){
         this.setState({
             contract: value,
@@ -136,7 +151,8 @@ export default class HomeScreen extends React.Component {
     componentDidUpdate(prevProps, prevState) {
         if (
             (prevState.contract !== this.state.contract) ||
-            (prevState.contractOptions !== this.state.contractOptions)
+            (prevState.contractOptions !== this.state.contractOptions) ||
+            (prevState.period !== this.state.period)
         ) {
             this.updateData()
         }
@@ -162,6 +178,7 @@ export default class HomeScreen extends React.Component {
 
                 <FiltersTabBar
                     contractChanged={this.contractFilterChanged}
+                    periodChanged={this.periodFilterChanged}
                 />
 
             </View>

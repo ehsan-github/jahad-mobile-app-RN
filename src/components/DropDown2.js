@@ -59,7 +59,7 @@ export default class DropDown extends React.Component {
                 onSelect={this._handleValueChange}
                 style={styles.dropdown_2}
                 defaultIndex={defaultValue}
-                defaultValue={options[defaultValue]}
+                defaultValue={options[defaultValue] || 'انتخاب کنید'}
                 options={options}
                 renderRow={this._renderRow}
                 textStyle={styles.dropdown_2_text}

@@ -131,18 +131,18 @@ export const insertArzeshYabiData = data => {
 export const createEjraDataDb = () => {
     db.transaction(tx => {
         tx.executeSql(
-            'create table if not exists ejra (id integer primary key not null, contract int, period int, network real, drain real, equip real);'
+            'create table if not exists ejraee (id integer primary key not null, contract int, period int, sort real, network real, drain real, equip real);'
         );
     });
 };
 
 export const insertEjraData = data => {
     db.transaction(tx => {
-        tx.executeSql('delete from ejra');
+        tx.executeSql('delete from ejraee');
         if (data.length > 0){
             data.forEach(row => {
                 tx.executeSql(
-                    'insert into ejra (contract, period, network, drain, equip) values (?, ?, ?, ?, ?)', [row.ContractID, row.PeriodID, row.Network, row.Drainage, row.Equipped]);
+                    'insert into ejraee (contract, period, sort, network, drain, equip) values (?, ?, ?, ?, ?, ?)', [row.ContractID, row.PeriodID, row.Sort, row.Network, row.Drainage, row.Equipped]);
             });
         }
     });

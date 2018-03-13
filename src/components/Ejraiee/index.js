@@ -8,6 +8,7 @@ import {
 import { Card, Badge } from 'react-native-elements'
 
 import Loading from '../Loading';
+import { numberWithCommas } from '../../functions'
 
 export const TableHeader = () => (
     <Card containerStyle={styles.headerContainerStyle} style={styles.tableHeader}>
@@ -31,7 +32,7 @@ const TableRow = ({ item }) => (
     </Card>
 );
 
-const strip = number => number ? number.toFixed(0) : 0;
+const strip = number => !number ? 0 : numberWithCommas(number.toFixed(0));
 
 export default class Table extends Component{
 

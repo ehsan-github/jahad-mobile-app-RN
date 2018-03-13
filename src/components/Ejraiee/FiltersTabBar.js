@@ -23,12 +23,15 @@ export class FiltersTabBar extends React.Component {
     constructor(props){
         super(props)
         this.state = {
+            period: { options: [], value: 0 },
             area: { options: [], value: -1 },
             contract: { options: [], value: -1 }
         }
         this.getAreaDataAndSetIt = this.getAreaDataAndSetIt.bind(this)
         this.getContractDataAndSetIt = this.getContractDataAndSetIt.bind(this)
+        this.getPeriodDataAndSetIt = this.getPeriodDataAndSetIt.bind(this)
 
+        this.periodDropdownChanged = this.periodDropdownChanged.bind(this)
         this.areaDropdownChanged = this.areaDropdownChanged.bind(this)
         this.contractDropdownChanged = this.contractDropdownChanged.bind(this)
     }
@@ -36,6 +39,7 @@ export class FiltersTabBar extends React.Component {
     componentWillMount(){
         this.getAreaDataAndSetIt()
         this.getContractDataAndSetIt()
+        this.getPeriodDataAndSetIt()
     }
 
     getAreaDataAndSetIt(){
@@ -69,6 +73,31 @@ export class FiltersTabBar extends React.Component {
         )
     }
 
+    getPeriodDataAndSetIt(){
+        db.transaction(
+            tx => {
+                tx.executeSql(
+                    `select * from periods`,
+                    [],
+                    (_, { rows: { _array } }) => {
+                        this.setState({ period: { options: _array, value: _array[0].id } })
+                    }
+                )
+            }
+        )
+    }
+
+    periodDropdownChanged(i){
+        let { period: oldValue } = this.state
+        let value = oldValue.options[i]
+        let newValue = R.assoc('value', value ? value.id : 1, oldValue)
+        this.setState({
+            period: newValue
+        })
+
+        this.props.periodChanged({ period: value || {} })
+    }
+
     areaDropdownChanged(i){
         let { area: oldValue } = this.state
         let value = oldValue.options[i-1] ? oldValue.options[i-1].id : -1
@@ -90,6 +119,11 @@ export class FiltersTabBar extends React.Component {
     }
 
     render() {
+        let periodOptions = this.state.period.options
+        let periodValue = this.state.period.value
+        let periodIndex = R.findIndex(R.propEq('id', periodValue), periodOptions)
+        if (periodIndex == -1) periodIndex = 0
+
         let areaOptions = R.prepend({ id: -1, name: 'همه' }, this.state.area.options)
         let areaValue = this.state.area.value
         let areaIndex = R.findIndex(R.propEq('id', areaValue), areaOptions)
@@ -101,7 +135,10 @@ export class FiltersTabBar extends React.Component {
         return (
             <View style={styles.tabBarInfoContainer}>
                 <View style={styles.tabBarFilterRight}>
-                    <DropDown2 name="حوزه" myref="2" style={styles.dropDown} defaultValue={areaIndex} options={areaOptions} handleValueChange={this.areaDropdownChanged}/> 
+                    <DropDown2 name="دوره" myref="1" style={styles.dorpDown} defaultValue={periodIndex} options={periodOptions} handleValueChange={this.periodDropdownChanged}/> 
+                </View>
+                <View style={styles.tabBarFilterMiddle}>
+                    <DropDown2 middle name="حوزه" myref="2" style={styles.dropDown} defaultValue={areaIndex} options={areaOptions} handleValueChange={this.areaDropdownChanged}/> 
                 </View>
                 <View style={styles.tabBarFilterLeft}>
                     <DropDown2 name="پیمان" myref="3" style={styles.dropDown} defaultValue={contractIndex} options={contractOptions} handleValueChange={this.contractDropdownChanged}/> 
@@ -146,12 +183,25 @@ const styles = StyleSheet.create({
         direction: 'rtl'
     },
     tabBarFilterRight: {
-        flex: .5,
-        flexBasis: .5,
+        /* right: '5%',*/
+        /* position: 'absolute',*/
+        flex: .33,
+        flexBasis: .33,
+        /* width: 50*/
+    },
+    tabBarFilterMiddle: {
+        /* left: '50%',*/
+        /* position: 'absolute',*/
+        flex: .34,
+        flexBasis: .34,
+        /* width: 50*/
     },
     tabBarFilterLeft: {
-        flex: .5,
-        flexBasis: .5,
+        /* left: '17%',*/
+        /* position: 'absolute',*/
+        flex: .33,
+        flexBasis: .33,
+        /* width: 50*/
     },
     col: {
         margin: -70
@@ -160,4 +210,3 @@ const styles = StyleSheet.create({
         height: 30
     },
 });
-
